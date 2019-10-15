@@ -33,24 +33,24 @@ public class ManejadorEventos implements ActionListener{
 		if (boton.getText().equals(".") && !ventana.getCajaTexto().getText().contains("."))
 			ventana.getCajaTexto().setText(ventana.getCajaTexto().getText()+boton.getText());
 		if (boton.getText().equals("+")) {
-			funcion='+';
-			if (!opera)
+			if (funcion=='=')
 				acumulador=Double.parseDouble(ventana.getCajaTexto().getText());
 			else
 				saca(suma());
+			funcion='+';
 			opera=true;
 		}
 		if (boton.getText().equals("-")) {
-			funcion='-';
-			if (!opera)
+			if (funcion=='=')
 				acumulador=Double.parseDouble(ventana.getCajaTexto().getText());
 			else			
 				saca(resta());
+			funcion='-';
 			opera=true;
 		}
 		if (boton.getText().equals("=")) {
 			opera();
-			opera=false;
+			opera=true;
 		}
 	}
 
@@ -66,6 +66,7 @@ public class ManejadorEventos implements ActionListener{
 			break;
 		}
 		acumulador=0;
+		funcion='=';
 	}
 	private void saca(String res) {
 		ventana.getCajaTexto().setText(res);
