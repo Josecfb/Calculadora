@@ -42,8 +42,19 @@ public class ManejadorEventos implements ActionListener, KeyListener {
 		}
 		if (boton.getName()=="borra")
 			ventana.getCajaTexto().setText(ventana.getCajaTexto().getText().substring(0, ventana.getCajaTexto().getText().length()-1));
-		if (boton.getName()=="masmenos")
-			ventana.getCajaTexto().setText(String.valueOf(Double.parseDouble(ventana.getCajaTexto().getText())*-1));
+		if (boton.getName()=="masmenos") {
+			acumulador=Double.valueOf(ventana.getCajaTexto().getText());
+			funcion='x';
+			opera();
+			funcion='=';
+		}
+		if (boton.getName()=="inversa") {
+			acumulador=Double.valueOf(ventana.getCajaTexto().getText());
+			funcion='i';
+			opera();
+			funcion='=';
+		}
+		
 
 	}
 
@@ -68,6 +79,12 @@ public class ManejadorEventos implements ActionListener, KeyListener {
 			case '/':
 				saca(divide());
 				break;
+			case 'x':
+				saca(masmenos());
+				break;
+			case 'i':
+				saca(inversa());
+				break;
 			default:
 				break;
 			}
@@ -77,8 +94,7 @@ public class ManejadorEventos implements ActionListener, KeyListener {
 		ventana.getCajaTexto().setText(res);
 	}
 	private String suma() {
-		acumulador+=Double.parseDouble(ventana.getCajaTexto().getText());
-		return Double.toString(acumulador);
+		return Double.toString(acumulador+Double.parseDouble(ventana.getCajaTexto().getText()));
 	}
 	private String resta() {
 		acumulador-=Double.parseDouble(ventana.getCajaTexto().getText());
@@ -89,8 +105,28 @@ public class ManejadorEventos implements ActionListener, KeyListener {
 		return Double.toString(acumulador);
 	}
 	private String divide() {
-		acumulador/=Double.parseDouble(ventana.getCajaTexto().getText());
+		if (Double.parseDouble(ventana.getCajaTexto().getText())==0) {
+			acumulador=0;
+			funcion='=';
+			return "Infinito";
+		}
+		else {
+			acumulador/=Double.parseDouble(ventana.getCajaTexto().getText());
+			return Double.toString(acumulador);
+		}
+	}
+	private String masmenos() {
+		acumulador*=-1;
 		return Double.toString(acumulador);
+	}
+	private String inversa() {
+		if (acumulador==0) {
+			return "Infinito";
+		}
+		else {
+		acumulador=1/acumulador;
+		return Double.toString(acumulador);
+		}
 	}
 
 	@Override

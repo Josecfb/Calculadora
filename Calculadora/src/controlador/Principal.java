@@ -5,7 +5,9 @@ public class Principal {
 	public static void main(String[] args) {
 		Ventana miVentana=new Ventana();
 		ManejadorEventos manejador=new ManejadorEventos(miVentana);
+		ManejadorMenu manejadorMenu=new ManejadorMenu(miVentana);
 		miVentana.EstablecerManejador(manejador);
+		miVentana.EstableceManejadorMenu(manejadorMenu);
 	}
 
 }
