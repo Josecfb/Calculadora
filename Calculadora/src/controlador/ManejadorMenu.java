@@ -10,29 +10,89 @@ public class ManejadorMenu implements ActionListener{
 
 	public ManejadorMenu(Ventana ventana) {
 		this.ventana=ventana;
-	}
+	}	
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			int ix=0,iy=0;
+			//CIENTIFICA
 			if (e.getSource()==ventana.getCientifica()) {
-				ventana.getTipo().setText("Científica");
+				if (ventana.getTipo().getText().equals("Estandar")) {
+					ix=0;
+					iy=150;
+				}
+				if (ventana.getTipo().getText().equals("Programador")) {
+					ix=-160;
+					iy=30;
+					ponBotones(32, 37, false);
+					basesQP(false);
+					ventana.getCajaTexto().setSize(320, 50);
+				}
+				mueveBotones(ix, iy);
+				ponBotones(20, 31, true); 
 				ventana.setSize(326, 560);
-				for (int b=0;b<ventana.getBoton().length;b++)
-					ventana.getBoton()[b].setBounds(ventana.getBoton()[b].getX(),ventana.getBoton()[b].getY()+150,ventana.getBoton()[b].getWidth(),ventana.getBoton()[b].getHeight());
-				for (int b=20;b<=31;b++)
-					ventana.getBoton()[b].setVisible(true);
+				ventana.getTipo().setText("Científica");
+				ventana.getBoton()[10].setEnabled(true);
+				ventana.getBoton()[15].setEnabled(true);
 			}
+			//ESTANDAR
 			if (e.getSource()==ventana.getEstandar()) {
+				if (ventana.getTipo().getText().equals("Científica")) {
+					ix=0;
+					iy=-150;
+					ponBotones(20, 31, false);
+				}	
+				if (ventana.getTipo().getText().equals("Programador")) {
+					ix=-160;
+					iy=-120;
+					ponBotones(32, 37, false);
+					basesQP(false);
+					ventana.getCajaTexto().setSize(320, 50);
+				}
+				mueveBotones(ix, iy);
 				ventana.getTipo().setText("Estandar");
 				ventana.setSize(326,410);
-				for (int b=0;b<ventana.getBoton().length;b++)
-					ventana.getBoton()[b].setBounds(ventana.getBoton()[b].getX(),ventana.getBoton()[b].getY()-150,ventana.getBoton()[b].getWidth(),ventana.getBoton()[b].getHeight());
-				for (int b=20;b<=32;b++)
-					ventana.getBoton()[b].setVisible(false);
+				ventana.getBoton()[10].setEnabled(true);
+				ventana.getBoton()[15].setEnabled(true);
 			}
+			//PROGRAMADOR
 			if (e.getSource()==ventana.getProgramador()) {
+				if (ventana.getTipo().getText().equals("Estandar")) {
+					ix=160;
+					iy=120;
+				}
+				if (ventana.getTipo().getText().equals("Científica")) {
+					ix=160;
+					iy=-30;
+					ponBotones(20, 31, false);
+				}
+				ponBotones(32, 37, true);
+				mueveBotones(ix, iy);
+				basesQP(true);
+				ventana.setSize(486, 530);
 				ventana.getTipo().setText("Programador");
+				ventana.getBoton()[10].setEnabled(false);
+				ventana.getBoton()[15].setEnabled(false);
+				ventana.getCajaTexto().setSize(479, 50);
+				ventana.getBarra().setSize(479, 30);
 			}
-
-	}
-
+		}
+		public void mueveBotones(int ix, int iy) {
+			System.out.println(ix+" "+iy);
+			for (int b=0;b<ventana.getBoton().length;b++)
+				ventana.getBoton()[b].setBounds(ventana.getBoton()[b].getX()+ix,ventana.getBoton()[b].getY()+iy,ventana.getBoton()[b].getWidth(),ventana.getBoton()[b].getHeight());
+			
+		}
+		public void ponBotones(int bi,int bf,boolean visible) {
+			for (int b=bi;b<=bf;b++)
+				ventana.getBoton()[b].setVisible(visible);
+		}
+		
+		public void basesQP(boolean visible) {
+			for (int b=0;b<4;b++) {
+				ventana.getlBase()[b].setVisible(visible);
+				ventana.getSistema()[b].setVisible(visible);
+			}
+		}
 }
+
+

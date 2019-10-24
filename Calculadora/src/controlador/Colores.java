@@ -8,13 +8,14 @@ import vista.Ventana;
 public class Colores  implements Runnable{
 	private Ventana ventana;
 	private Thread hilo;
+	private boolean pausa;
 
-	@SuppressWarnings("deprecation")
-	public Colores(Ventana ventana) {
+	public Colores(Ventana ventana,Boolean pausa) {
 		this.ventana=ventana;
+		this.pausa=pausa;
 		hilo=new Thread(this);
 		hilo.start();
-		hilo.suspend();
+		//hilo.suspend();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -54,6 +55,18 @@ public class Colores  implements Runnable{
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				System.out.println("pausa"+pausa);
+				synchronized (this) {
+				while (pausa) {
+						try {
+							this.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				}
+				}
+
 				for (int bo=0;bo<ventana.getBoton().length;bo++) {				
 					r[bo]+=ir[bo];
 					g[bo]+=ig[bo];
@@ -80,6 +93,10 @@ public class Colores  implements Runnable{
 					ventana.getProgramador().setBackground(new Color(r[10],g[11],b[12]));
 				}
 			}
+	}
+
+	public void setPausa(boolean pausa) {
+		this.pausa = pausa;
 	}
 
 }

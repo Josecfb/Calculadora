@@ -12,8 +12,6 @@ public class Principal {
 		miVentana.EstablecerManejador(manejador);
 		miVentana.EstableceManejadorMenu(manejadorMenu);
 		miVentana.EstablecerManejadorTeclado(manejadorTeclado);
-		
-
 	}
 
 }
