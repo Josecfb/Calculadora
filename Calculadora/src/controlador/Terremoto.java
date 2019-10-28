@@ -1,5 +1,13 @@
 package controlador;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import vista.Ventana;
 
 public class Terremoto implements Runnable{
@@ -16,6 +24,25 @@ public class Terremoto implements Runnable{
 
 	@Override
 	public void run() {
+		Clip sonido1=null, sonido2=null;
+
+		try {
+			sonido1 = AudioSystem.getClip();
+			sonido1.open(AudioSystem.getAudioInputStream(new File("thanos1.wav")));
+			sonido1.start();
+//			sonido2 = AudioSystem.getClip();
+//			sonido2.open(AudioSystem.getAudioInputStream(new File("thanos2.wav")));
+//			sonido2.start();
+		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		int vx=ventana.getX();
 		int vy=ventana.getY();
 		int pix[]=new int[ventana.getBoton().length];
@@ -32,27 +59,29 @@ public class Terremoto implements Runnable{
 		}
 		double ia=0.1;
 		double v=0;
+		ventana.getCajaTexto().setText("No posees las gemas");
 		while (v<=(int)(10*2*Math.PI)) {
 			v+=ia;
-		//	if()
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 			for (int b=0;b<ventana.getBoton().length;b++) {
 				a[b]+=ia;
-				x[b]=(int)(Math.cos(a[b])*50);
-				System.out.println(ventana.getBoton()[b].getX()+x[b]);
-				y[b]=(int)(Math.sin(a[b])*25);
-				ventana.getBoton()[b].setLocation(pix[b]+x[b]*2,piy[b]+y[b]*2);		
-				ventana.setLocation(vx+x[1]*5, vy+y[1]*5);
+				x[b]=(int)(Math.cos(a[b])*(60-(int)v));
+				y[b]=(int)(Math.sin(a[b])*(30-(int)v/2));
+				
+				ventana.getBoton()[b].setLocation(pix[b]+x[b]*2,piy[b]+y[b]*2);	
+				
+				if (v<55)
+				ventana.setLocation(vx+x[1]*(15-(int)v/2), vy+y[1]*(15-(int)v/2));
 			}
 		}
 			for (int b=0;b<ventana.getBoton().length;b++)
 				ventana.getBoton()[b].setLocation(pix[b],piy[b]);
-		}		
+			ventana.getCajaTexto().setText("0");
+		}	
 	}
 

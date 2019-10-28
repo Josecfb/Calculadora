@@ -8,6 +8,7 @@ import vista.Ventana;
 public class ManejadorMenu implements ActionListener{
 	private Ventana ventana; 
 
+
 	public ManejadorMenu(Ventana ventana) {
 		this.ventana=ventana;
 	}	
@@ -26,13 +27,15 @@ public class ManejadorMenu implements ActionListener{
 					ponBotones(32, 37, false);
 					basesQP(false);
 					ventana.getCajaTexto().setSize(320, 50);
+					
 				}
 				mueveBotones(ix, iy);
 				ponBotones(20, 31, true); 
 				ventana.setSize(326, 560);
 				ventana.getTipo().setText("Científica");
-				ventana.getBoton()[10].setEnabled(true);
-				ventana.getBoton()[15].setEnabled(true);
+				quitaBotonesProgramador(true);
+				ventana.setEsProgramador(false);
+				
 			}
 			//ESTANDAR
 			if (e.getSource()==ventana.getEstandar()) {
@@ -51,8 +54,8 @@ public class ManejadorMenu implements ActionListener{
 				mueveBotones(ix, iy);
 				ventana.getTipo().setText("Estandar");
 				ventana.setSize(326,410);
-				ventana.getBoton()[10].setEnabled(true);
-				ventana.getBoton()[15].setEnabled(true);
+				quitaBotonesProgramador(true);
+				ventana.setEsProgramador(false);
 			}
 			//PROGRAMADOR
 			if (e.getSource()==ventana.getProgramador()) {
@@ -70,10 +73,10 @@ public class ManejadorMenu implements ActionListener{
 				basesQP(true);
 				ventana.setSize(486, 530);
 				ventana.getTipo().setText("Programador");
-				ventana.getBoton()[10].setEnabled(false);
-				ventana.getBoton()[15].setEnabled(false);
+				quitaBotonesProgramador(false);
 				ventana.getCajaTexto().setSize(479, 50);
 				ventana.getBarra().setSize(479, 30);
+				ventana.setEsProgramador(true);
 			}
 		}
 		public void mueveBotones(int ix, int iy) {
@@ -85,6 +88,11 @@ public class ManejadorMenu implements ActionListener{
 		public void ponBotones(int bi,int bf,boolean visible) {
 			for (int b=bi;b<=bf;b++)
 				ventana.getBoton()[b].setVisible(visible);
+		}
+		public void quitaBotonesProgramador(boolean visible) {
+			ventana.getBoton()[10].setEnabled(visible);
+			ventana.getBoton()[15].setEnabled(visible);
+			ventana.getBoton()[17].setEnabled(visible);
 		}
 		
 		public void basesQP(boolean visible) {

@@ -1,27 +1,29 @@
 package controlador;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
-
+import javax.swing.border.BevelBorder;
+import javax.swing.border.SoftBevelBorder;
 
 //import javax.swing.JLabel;
 import vista.Ventana;
 
 public class ManejadorEventos implements ActionListener {
+	private static final String MATRIX = "Matrix te posee";
+	private static final String INFINITO = "No posees las gemas";
 	private Ventana ventana; 
-	public boolean psico=false;
+	boolean psico=false, color=false;
 	char funcion='=';
 	boolean opera=true;
 	double acumulador=0;
-	int base;
-
+	private int base=10;
 
 	public ManejadorEventos(Ventana ventana) {
 		this.ventana=ventana;
@@ -39,102 +41,154 @@ public class ManejadorEventos implements ActionListener {
 			interruptores(e);
 	}
 	
-	public void interruptores(ActionEvent  e) {
+	private void interruptores(ActionEvent  e) {
 		JCheckBox casilla=(JCheckBox) e.getSource();
 		String nomCas=casilla.getName();
-		if (nomCas.equals("interruptor")) {
-			System.out.println(psico);
+		if (nomCas.equals("color")) {
+			if (!color) {
+				color=true;
+				System.out.println("color");
+				ventana.geteInterruptor()[1].setVisible(true);
+				ventana.getInterruptor()[1].setVisible(true);
+				casilla.setIcon(new ImageIcon(new ImageIcon("on.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
+				int abajo=180;
+				int[] r =new int[ventana.getBoton().length];
+				int[] g =new int[ventana.getBoton().length];
+				int[] b =new int[ventana.getBoton().length];
+				int[] rb =new int[ventana.getlBase().length];
+				int[] gb =new int[ventana.getlBase().length];
+				int[] bb =new int[ventana.getlBase().length];
+				for (int i=0;i<=ventana.geteInterruptor().length-1;i++)
+					ventana.geteInterruptor()[i].setForeground(new Color(255,255,255));
+				for (int bo=0;bo<ventana.getBoton().length;bo++) {
+					r[bo]=(int)(Math.random()*(254-abajo)+abajo);
+					g[bo]=(int)(Math.random()*(254-abajo)+abajo);
+					b[bo]=(int)(Math.random()*(254-abajo)+abajo);
+					ventana.getBoton()[bo].setBackground(new Color(r[bo],g[bo],b[bo]));
+				}
+				for (int ba=0;ba<ventana.getlBase().length;ba++) {
+					rb[ba]=(int)(Math.random()*(254-abajo)+abajo);
+					gb[ba]=(int)(Math.random()*(254-abajo)+abajo);
+					bb[ba]=(int)(Math.random()*(254-abajo)+abajo);
+					ventana.getlBase()[ba].setBackground(new Color(rb[ba],gb[ba],bb[ba]));
+				}
+				ventana.getCajaTexto().setBackground(new Color(r[5], g[4], b[8]));
+				ventana.getContentPane().setBackground(new Color(r[1]-99,g[2]-99,b[3]-99));
+				ventana.getBarra().setBackground(new Color(r[10],g[11],b[12]));
+				ventana.getEstandar().setBackground(new Color(r[10],g[11],b[12]));
+				ventana.getCientifica().setBackground(new Color(r[10],g[11],b[12]));
+				ventana.getProgramador().setBackground(new Color(r[10],g[11],b[12]));
+				for (int s=0;s<ventana.getSistema().length;s++)
+					ventana.getSistema()[s].setForeground(new Color(255,255,255));
+					
+			}else {
+				ventana.geteInterruptor()[1].setVisible(false);
+				ventana.getInterruptor()[1].setVisible(false);
+				for (int i=0;i<=ventana.geteInterruptor().length-1;i++)
+					ventana.geteInterruptor()[i].setForeground(new Color(0,0,0));
+				casilla.setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
+				for (int bo=0;bo<ventana.getBoton().length;bo++) 
+					ventana.getBoton()[bo].setBackground(null);
+				for (int ba=0;ba<ventana.getlBase().length;ba++)
+					ventana.getlBase()[ba].setBackground(null);
+				ventana.getCajaTexto().setBackground(null);
+				ventana.getContentPane().setBackground(null);
+				ventana.getBarra().setBackground(null);
+				ventana.getEstandar().setBackground(null);
+				ventana.getCientifica().setBackground(null);
+				ventana.getProgramador().setBackground(null);
+				for (int s=0;s<ventana.getSistema().length;s++)
+					ventana.getSistema()[s].setForeground(new Color(0,0,0));
+				color=false;
+			}
+		}
+		
+		if (nomCas.equals("teseracto")) {
 			if (psico) {
-				ImageIcon off;
-				Icon iconooff;
-				off=new ImageIcon("off.png");
-				iconooff=new ImageIcon(off.getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT));
-				casilla.setIcon(iconooff);
+				casilla.setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
 				psico=false;
-				System.out.println("psico"+psico);
 				ventana.pausar();
 				
 			}else {
-				ImageIcon on;
-				Icon iconoon;
-				on=new ImageIcon("on.png");
-				iconoon=new ImageIcon(on.getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT));
-				casilla.setIcon(iconoon);
+				casilla.setIcon(new ImageIcon(new ImageIcon("on.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
 				psico=true;
-				System.out.println("psico"+psico);
 				ventana.reanudar();
 			}
 		}
+	
 	}
 	
-	public void radios(ActionEvent e) {
+	private void radios(ActionEvent e) {
 		quitafoco();
 		JRadioButton radio=(JRadioButton) e.getSource();
 		String texRa=radio.getText();
 		System.out.println(texRa);
 		for (int r=0;r<=3;r++) 
-			if (ventana.getSistema()[r].isSelected()) 
+			if (ventana.getSistema()[r].isSelected()) {
 				ventana.getSistema()[r].setBorderPainted(true);
-			else ventana.getSistema()[r].setBorderPainted(false);
-		
+				ventana.getlBase()[r].setBorder(new SoftBevelBorder(BevelBorder.LOWERED));
+				ventana.getSistema()[r].setFont(new Font("Calibri", Font.BOLD, 22));
+			}else {
+				ventana.getSistema()[r].setBorderPainted(false);
+				ventana.getSistema()[r].setFont(new Font("Calibri", Font.PLAIN, 22));
+				ventana.getlBase()[r].setBorder(null);
+			}
 		if (texRa.equals("HEX")) {
 			activadecimal(true);
-			avtivahexadecimal(true);
+			activahexadecimal(true);
 			base=16;
 			cambiaBase();
 		}
 		if (texRa.equals("DEC")) {
-			avtivahexadecimal(false);
+			activahexadecimal(false);
 			activadecimal(true);
 			base=10;
 			cambiaBase();
 		}
 		if (texRa.equals("OCT")) {
-			activadecimal(false);
+			activahexadecimal(false);
 			activadecimal(false);
 			activaoctal(true);
 			base=8;
 			cambiaBase();
 		}
 		if (texRa.equals("BIN")) {
-			activadecimal(false);
+			activahexadecimal(false);
 			activadecimal(false);
 			ventana.getBoton()[0].setEnabled(true);
 			ventana.getBoton()[1].setEnabled(true);
 			base=2;
 			cambiaBase();
 		}
-		
-		
+	
 	}
 
 	private void cambiaBase() {
 		ventana.getCajaTexto().setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), base));
 	}
-
-	public void activadecimal(boolean activa) {
+	private void activadecimal(boolean activa) {
 		for (int b=0;b<=9;b++) 
 			ventana.getBoton()[b].setEnabled(activa);
 	}
-	public void avtivahexadecimal(boolean activa) {
+	private void activahexadecimal(boolean activa) {
 		for (int b=32;b<=37;b++)
 			ventana.getBoton()[b].setEnabled(activa);
 	}
-	public void activaoctal(boolean activa) {
+	private void activaoctal(boolean activa) {
 		for (int b=0;b<=7;b++)
 			ventana.getBoton()[b].setEnabled(activa);
 	}
-
-	public void botones(ActionEvent e) {
+	private void botones(ActionEvent e) {
 		quitafoco();
 		JButton boton=(JButton) e.getSource();
 		String nomBo="";
 		nomBo=boton.getName();
-		
 		//Números
 		numOpera(nomBo);
 		if (nomBo.equals("borra")) {
 			ventana.getCajaTexto().setText(ventana.getCajaTexto().getText().substring(0, ventana.getCajaTexto().getText().length()-1));
+			if (ventana.getCajaTexto().getText().equals(""))
+				ventana.getCajaTexto().setText("0");
 		}
 		if (nomBo.equals("masmenos")) {
 			funcion='x';
@@ -197,22 +251,20 @@ public class ManejadorEventos implements ActionListener {
 	}
 
 	private void numOpera(String co) {
-		System.out.println(co);
 		if ((co.compareTo("0")>=0 && co.compareTo("9")<=0)||(co.compareTo("A")>=0 && co.compareTo("F")<=0)) {
-			if (opera) {
+			if (opera||ventana.getCajaTexto().getText().equals("0")) {
 				ventana.getCajaTexto().setText(co);
+				if (ventana.isEsProgramador()) actualizaBases();
 				opera=false;}
-			else
+			else {
 				ventana.getCajaTexto().setText(ventana.getCajaTexto().getText()+co);
-		ventana.getlBase()[1].setText(convierteADecimal(ventana.getCajaTexto().getText(), 10));
-		ventana.getlBase()[0].setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), 16));
-		ventana.getlBase()[2].setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), 8));
-		ventana.getlBase()[3].setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), 2));
+				if (ventana.isEsProgramador()) actualizaBases();
+			}
 		}
 		//coma
 		if (co.equals(".") && !ventana.getCajaTexto().getText().contains("."))
 			ventana.getCajaTexto().setText(ventana.getCajaTexto().getText()+co);
-			
+	
 		if ("=+-*/#@R".contains(co)) {
 			opera();
 			funcion=co.charAt(0);
@@ -220,13 +272,44 @@ public class ManejadorEventos implements ActionListener {
 		}
 	}
 
+	private void actualizaBases() {
+		int i=1;	
+		switch (base) {
+		case 2:
+			i=3;
+			break;
+		case 8:
+			i=2;
+			break;
+		case 10:
+			i=1;
+			break;
+		case 16:
+			i=0;
+			break;
+		default:
+			break;
+		}
+		ventana.getlBase()[i].setText(ventana.getCajaTexto().getText());
+		ventana.getlBase()[1].setText(convierteADecimal(ventana.getCajaTexto().getText(), base));
+		ventana.getlBase()[0].setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), 16));
+		ventana.getlBase()[2].setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), 8));
+		ventana.getlBase()[3].setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), 2));
+	}
+
 	private void sacaAcuDeCaja() {
-		acumulador=Double.valueOf(ventana.getCajaTexto().getText());
+		if (!ventana.isEsProgramador())
+			acumulador=valorPantalla();
+		else acumulador =valorDecimal();
+	}
+
+	private Double valorDecimal() {
+		return Double.valueOf(ventana.getlBase()[1].getText());
 	}
 
 	private void opera() {
 		if (funcion=='=')
-			acumulador=Double.parseDouble(ventana.getCajaTexto().getText());
+			sacaAcuDeCaja();
 		else
 			switch (funcion) {
 			case '+':
@@ -285,34 +368,52 @@ public class ManejadorEventos implements ActionListener {
 			}
 		opera=true;
 	}
+
+	private Double valorPantalla() {
+		if (!ventana.isEsProgramador())
+			return Double.valueOf(ventana.getCajaTexto().getText());
+		else return Double.valueOf(ventana.getlBase()[1].getText());
+	}
 	private void saca(String res) {
-		ventana.getCajaTexto().setText(res);
-		//ventana.getSistema()[1].setText(convierteADecimal(Integer.parseInt(res), 10));
+		if (res.equals("Infinity")) {
+			ventana.getCajaTexto().setText(INFINITO);
+			new Terremoto(ventana);
+			saca("0");
+		}else if (!ventana.isEsProgramador())
+				ventana.getCajaTexto().setText(res);
+		else {
+			ventana.getlBase()[1].setText(res);
+			ventana.getCajaTexto().setText(convierteABase(Integer.valueOf(ventana.getlBase()[1].getText().split("\\.")[0]), base));
+			actualizaBases();
+		}
 	}
 	private String suma() {
-		return Double.toString(acumulador+Double.parseDouble(ventana.getCajaTexto().getText()));
+		System.out.println("suma"+Double.toString(acumulador+valorPantalla()));
+		return Double.toString(acumulador+valorPantalla());
 	}
 	private String resta() {
-		acumulador-=Double.parseDouble(ventana.getCajaTexto().getText());
+		acumulador-=valorPantalla();
+		if (acumulador-valorPantalla()<0 && ventana.isEsProgramador()) {
+			ventana.getCajaTexto().setText("Negativo");
+			return "0";
+		}
 		return acuStr();
 	}
 	private String multiplica() {
-		acumulador*=Double.parseDouble(ventana.getCajaTexto().getText());
+		acumulador*=valorPantalla();
 		return acuStr();
 	}
 	private String divide() {
-		if (Double.parseDouble(ventana.getCajaTexto().getText())==0) {
+		if (valorPantalla()==0) {
 			acumulador=0;
 			funcion='=';
 			opera=true;
-
 			new Terremoto(ventana);
-
-			
-			return "No posees las gemas";
+			saca("0");
+			return INFINITO;
 		}
 		else {
-			acumulador/=Double.parseDouble(ventana.getCajaTexto().getText());
+			acumulador/=valorPantalla();
 			return acuStr();
 		}
 	}
@@ -332,28 +433,37 @@ public class ManejadorEventos implements ActionListener {
 	private String cuadrado() {
 		acumulador=Math.pow(acumulador, 2);
 		return acuStr();
-
 	}
-	
 	private String raizCuadrada() {
 		if (acumulador>0) {
 			acumulador=Math.sqrt(acumulador);
 			return acuStr();
-		}else return "No es un número real";
+		}else {
+			new Matrix(ventana);
+			return MATRIX;
+		}
 	}
 	private String raizEnesima() {
-		acumulador=Math.pow(acumulador, 1/Double.parseDouble(ventana.getCajaTexto().getText()));
-		return acuStr();
+		if (acumulador<0 && valorPantalla()%2==0) {
+			new Matrix(ventana);
+			return MATRIX;
+		}else {
+			acumulador=Math.pow(acumulador, 1/valorPantalla());
+			return acuStr();
+		}
 	}
 	private String potenciaEnesima() {
-		acumulador=Math.pow(acumulador, Double.parseDouble(ventana.getCajaTexto().getText()));
+		acumulador=Math.pow(acumulador, valorPantalla());
 		return acuStr();
 	}
 	private String factorial() {
 		if(acumulador==Math.floor(acumulador)) {
 			double num=acumulador;
-			for (int i=2;i<num;i++)
+			for (int i=2;i<num;i++) {
 				acumulador*=i;
+				if (Double.isInfinite(acumulador))
+					break;
+			}
 			return acuStr();
 		}else {
 			opera=true;
@@ -407,19 +517,16 @@ public class ManejadorEventos implements ActionListener {
 	private String sacaLetra(int r) {
 		return String.valueOf((char)((r-10)+'A'));
 	}
-	
 	private String resto(int r) {
 		if (r>9)
 			return sacaLetra(r);
 		else
 			return String.valueOf(r);
 	}
-	
 	private String resto() {
-		acumulador=acumulador%Double.parseDouble(ventana.getCajaTexto().getText());
+		acumulador=acumulador%valorPantalla();
 		return acuStr();
 	}
-
 	private String acuStr() {
 		return Double.toString(acumulador);
 	}
@@ -439,8 +546,7 @@ public class ManejadorEventos implements ActionListener {
 		acumulador=Math.tan(acumulador);
 		return acuStr();
 	}
-	
-	public void quitafoco() {
+	private void quitafoco() {
 		ventana.requestFocus();
-	}
+	}	
 }

@@ -9,8 +9,8 @@ public class Principal {
 		ManejadorEventos manejador=new ManejadorEventos(miVentana);
 		ManejadorMenu manejadorMenu=new ManejadorMenu(miVentana);
 		ManejadorTeclado manejadorTeclado=new ManejadorTeclado(miVentana);
-		miVentana.EstablecerManejador(manejador);
 		miVentana.EstableceManejadorMenu(manejadorMenu);
+		miVentana.EstablecerManejador(manejador);
 		miVentana.EstablecerManejadorTeclado(manejadorTeclado);
 	}
 

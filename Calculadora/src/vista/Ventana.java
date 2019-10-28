@@ -2,7 +2,13 @@ package vista;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Image;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,20 +31,26 @@ public class Ventana extends JFrame {
 	private static final int ANCHO_BOT = 0;
 	private static final int DY=10;
 	private JButton boton[] =new JButton[38]; //Array de botones--------------------------------
-	private JCheckBox interruptor;
+	private JCheckBox interruptor[]=new JCheckBox[2];
+	private JLabel eInterruptor[]=new JLabel[2];
 	private JLabel labelAcu;
 	private JLabel cajaTexto;
+	private JLabel[] codigoMatrix=new JLabel[20];
 	private JLabel lBase[]=new JLabel[4];
 	private ButtonGroup gSistemas;
 	private JRadioButton rSistema[]=new JRadioButton[4];
 	private JMenuBar barra;
 	private JMenu tipo;
 	private JMenuItem estandar,cientifica,programador;
+	private boolean esProgramador=false;
 	Font miFuente=new Font("Calibri", Font.PLAIN, 22);
+	Font intFuente=new Font("Calibri", Font.PLAIN, 11);
 	Font fuentePantalla=new Font("Calibri", Font.PLAIN, 30);
+	
 	boolean luces=true;
 	boolean suspender=false;
 	Colores colores;
+
 	
 	public Ventana() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,16 +85,32 @@ public class Ventana extends JFrame {
 		tipo.add(cientifica);
 		tipo.add(programador);
 		
-		interruptor=new JCheckBox();
-		interruptor.setBounds(10, 85, 40, 20);
-		interruptor.setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
-		interruptor.setName("interruptor");
-		interruptor.setBackground(new Color(1,1,1));
-		interruptor.setOpaque(false);
-		interruptor.setBorder(null);	
-		add(interruptor);
-		interruptor.setVisible(false);
-		interruptor.setVisible(true);
+		interruptor[0]=new JCheckBox();
+		interruptor[0].setBounds(10, 85, 40, 20);
+		interruptor[0].setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
+		interruptor[0].setName("color");
+		interruptor[0].setOpaque(false);
+		add(interruptor[0]);
+		interruptor[0].setVisible(false);
+		interruptor[0].setVisible(true);
+		eInterruptor[0]=new JLabel("Interfaz TS");
+		eInterruptor[0].setBounds(7,100,80,20);
+		eInterruptor[0].setFont(intFuente);
+		add(eInterruptor[0]);
+		
+		
+		interruptor[1]=new JCheckBox();
+		interruptor[1].setBounds(80, 85, 40, 20);
+		interruptor[1].setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
+		interruptor[1].setName("teseracto");
+		interruptor[1].setOpaque(false);
+		add(interruptor[1]);
+		interruptor[1].setVisible(false);
+		eInterruptor[1]=new JLabel("Teseracto");
+		eInterruptor[1].setBounds(75,100,80,20);
+		eInterruptor[1].setFont(intFuente);
+		add(eInterruptor[1]);
+		eInterruptor[1].setVisible(false);
 		
 		
 		//Pinta Botones numéricos
@@ -145,96 +173,84 @@ public class Ventana extends JFrame {
 		boton[b].setBounds(80,70+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("raizcuadrada");
 		boton[b].setIcon(new ImageIcon(new ImageIcon("raiz.png").getImage().getScaledInstance(28, 28, Image.SCALE_DEFAULT)));
-		boton[b].setVisible(false);
 		b++;//21
 		boton[b]=new JButton();
 		boton[b].setBounds(240, 70+DY, ANCHO_BOT, ALTO_BOT);
 		boton[b].setName("inversa");
 		boton[b].setIcon(new ImageIcon(new ImageIcon("inversa.png").getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT)));
-		boton[b].setVisible(false);
 		b++;//22
 		boton[b]=new JButton("");
 		boton[b].setBounds(160,70+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("cuadrado");
 		boton[b].setIcon(new ImageIcon(new ImageIcon("cuadrado.png").getImage().getScaledInstance(28, 28, Image.SCALE_DEFAULT)));
-		boton[b].setVisible(false);
 		b++;//23
 		boton[b]=new JButton("n!");
 		boton[b].setBounds(0,70+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("factorial");
-		boton[b].setVisible(false);
 		b++;//24
 		boton[b]=new JButton();
 		boton[b].setBounds(80,20+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("#");//raiz enesima
 		boton[b].setIcon(new ImageIcon(new ImageIcon("raizenesima.png").getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT)));
-		boton[b].setVisible(false);
 		b++;//25
 		boton[b]=new JButton();
 		boton[b].setBounds(160,20+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("@");//potencia enesima
 		boton[b].setIcon(new ImageIcon(new ImageIcon("potenciaenesima.png").getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)));
-		boton[b].setVisible(false);
 		b++;//26
 		boton[b]=new JButton("pri?");
 		boton[b].setBounds(0,20+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("primo");//esprimo
-		boton[b].setVisible(false);	
 		b++;// 27
 		boton[b]=new JButton("mod");
 		boton[b].setBounds(240,20+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("R");//resto
-		boton[b].setVisible(false);	
 		b++;//28
-		boton[b]=new JButton("pi");
+		boton[b]=new JButton();
 		boton[b].setBounds(0,-30+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("pi");//pi
-		boton[b].setVisible(false);	
+		boton[b].setIcon(new ImageIcon(new ImageIcon("pi.png").getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)));
 		b++;//29
 		boton[b]=new JButton("sen");
 		boton[b].setBounds(80,-30+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("seno");//seno
-		boton[b].setVisible(false);	
 		b++;//30
 		boton[b]=new JButton("cos");
 		boton[b].setBounds(160,-30+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("coseno");//coseno
-		boton[b].setVisible(false);	
 		b++;//31
 		boton[b]=new JButton("tan");
 		boton[b].setBounds(240,-30+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("tangente");//pi
-		boton[b].setVisible(false);	
 		b++;//32
 		boton[b]=new JButton("A");
 		boton[b].setBounds(-160,170+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("A");//A
-		boton[b].setEnabled(false);
 		b++;//33
 		boton[b]=new JButton("B");
 		boton[b].setBounds(-160,220+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("B");//B
-		boton[b].setEnabled(false);		
 		b++;//34
 		boton[b]=new JButton("C");
 		boton[b].setBounds(-160,270+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("C");//C
-		boton[b].setEnabled(false);
 		b++;//35
 		boton[b]=new JButton("D");
 		boton[b].setBounds(-80,170+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("D");//D
-		boton[b].setEnabled(false);
 		b++;//36
 		boton[b]=new JButton("E");
 		boton[b].setBounds(-80,220+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("E");//E
-		boton[b].setEnabled(false);
 		b++;//37
 		boton[b]=new JButton("F");
 		boton[b].setBounds(-80,270+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("F");//C
-		boton[b].setEnabled(false);
+	
+		for(b=20;b<=37;b++)
+			boton[b].setVisible(false);
+		for (b=32;b<=37;b++)
+			boton[b].setEnabled(false);
 		for (b=0;b<boton.length;b++)
 			ponBoton(b);
 
@@ -271,19 +287,48 @@ public class Ventana extends JFrame {
 			add(rSistema[s]);
 			rSistema[s].setVisible(false);
 			gSistemas.add(rSistema[s]);
-			lBase[s]=new JLabel("SISTEMA");
-			lBase[s].setBounds(80, 120+s*30, 406, 30);
+			lBase[s]=new JLabel("0");
+			lBase[s].setBounds(80, 120+s*30, 386, 30);
 			lBase[s].setOpaque(true);
+			//lBase[s].setBorder(new SoftBevelBorder(BevelBorder.LOWERED));
+			//lBase[s].setBorderPainted(false);
 			lBase[s].setFont(miFuente);
 			add(lBase[s]);
 			lBase[s].setVisible(false);
 		}
 		rSistema[1].setSelected(true);
 		rSistema[1].setBorderPainted(true);
+		rSistema[1].setFont(new Font("Calibri", Font.BOLD, 22));
 		lBase[0].setName("hex");
 		lBase[1].setName("dec");
 		lBase[2].setName("oct");
 		lBase[3].setName("bin");
+		BufferedInputStream myStream=null;
+		try {
+			 myStream = new BufferedInputStream(new FileInputStream("src/matrix code nfi.ttf"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Font fuenteMatrix=null;
+		try {
+			fuenteMatrix = Font.createFont(Font.TRUETYPE_FONT, myStream);
+		} catch (FontFormatException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fuenteMatrix = fuenteMatrix.deriveFont(Font.PLAIN, 26);
+		for (int l=0;l<codigoMatrix.length;l++) {
+			codigoMatrix[l]=new JLabel();
+			codigoMatrix[l].setBounds(0, l*30, 320, 30);
+			codigoMatrix[l].setOpaque(true);
+			codigoMatrix[l].setVisible(false);
+			codigoMatrix[l].setBackground(new Color(0,0,0));
+			codigoMatrix[l].setForeground(new Color(0,255,0));
+			codigoMatrix[l].setFont(fuenteMatrix);
+			add(codigoMatrix[l]);
+		}
+
 		
 	}
 
@@ -300,7 +345,8 @@ public class Ventana extends JFrame {
 
 		for(int b=0;b<boton.length;b++) 
 			boton[b].addActionListener(manejador);
-		interruptor.addActionListener(manejador);
+		for (int i=0;i<interruptor.length;i++)
+			interruptor[i].addActionListener(manejador);
 		for (int s=0;s<rSistema.length;s++)
 			rSistema[s].addActionListener(manejador);
 	}
@@ -356,6 +402,21 @@ public class Ventana extends JFrame {
 
 	public JLabel[] getlBase() {
 		return lBase;
+	}
+	public JLabel[] geteInterruptor() {
+		return eInterruptor;
+	}
+	public void setEsProgramador(boolean esProgramador) {
+		this.esProgramador = esProgramador;
+	}
+	public boolean isEsProgramador() {
+		return esProgramador;
+	}
+	public JCheckBox[] getInterruptor() {
+		return interruptor;
+	}
+	public JLabel[] getCodigoMatrix() {
+		return codigoMatrix;
 	}	
 	
 }
