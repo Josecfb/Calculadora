@@ -5,6 +5,12 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -46,6 +52,7 @@ public class ManejadorEventos implements ActionListener {
 		String nomCas=casilla.getName();
 		if (nomCas.equals("color")) {
 			if (!color) {
+				suena("interfaceTS2.wav");
 				color=true;
 				System.out.println("color");
 				ventana.geteInterruptor()[1].setVisible(true);
@@ -82,6 +89,7 @@ public class ManejadorEventos implements ActionListener {
 					ventana.getSistema()[s].setForeground(new Color(255,255,255));
 					
 			}else {
+				suena("interfaceTS.wav");
 				ventana.geteInterruptor()[1].setVisible(false);
 				ventana.getInterruptor()[1].setVisible(false);
 				for (int i=0;i<=ventana.geteInterruptor().length-1;i++)
@@ -105,11 +113,13 @@ public class ManejadorEventos implements ActionListener {
 		
 		if (nomCas.equals("teseracto")) {
 			if (psico) {
+				suena("teseracto_off.wav");
 				casilla.setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
 				psico=false;
 				ventana.pausar();
 				
 			}else {
+				suena("teseracto_on.wav");
 				casilla.setIcon(new ImageIcon(new ImageIcon("on.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
 				psico=true;
 				ventana.reanudar();
@@ -252,6 +262,7 @@ public class ManejadorEventos implements ActionListener {
 
 	private void numOpera(String co) {
 		if ((co.compareTo("0")>=0 && co.compareTo("9")<=0)||(co.compareTo("A")>=0 && co.compareTo("F")<=0)) {
+			suena(co+".wav");
 			if (opera||ventana.getCajaTexto().getText().equals("0")) {
 				ventana.getCajaTexto().setText(co);
 				if (ventana.isEsProgramador()) actualizaBases();
@@ -262,10 +273,24 @@ public class ManejadorEventos implements ActionListener {
 			}
 		}
 		//coma
-		if (co.equals(".") && !ventana.getCajaTexto().getText().contains("."))
+		if (co.equals(".") && !ventana.getCajaTexto().getText().contains(".")) {
+			suena("coma.wav");
 			ventana.getCajaTexto().setText(ventana.getCajaTexto().getText()+co);
-	
+		}
 		if ("=+-*/#@R".contains(co)) {
+			switch (co) {
+			case "*":
+				suena("x.wav");
+				break;
+			case "/":
+				suena("en.wav");
+				break;
+			default:
+				if (!"#@R".contains(co))
+				suena(co+".wav");
+				break;
+			}
+			
 			opera();
 			funcion=co.charAt(0);
 			System.out.println(funcion);
@@ -377,14 +402,18 @@ public class ManejadorEventos implements ActionListener {
 	private void saca(String res) {
 		if (res.equals("Infinity")) {
 			ventana.getCajaTexto().setText(INFINITO);
+			new Pronuncia(INFINITO);
 			new Terremoto(ventana);
 			saca("0");
-		}else if (!ventana.isEsProgramador())
+		}else if (!ventana.isEsProgramador()) {
 				ventana.getCajaTexto().setText(res);
+				new Pronuncia(res);
+		}
 		else {
 			ventana.getlBase()[1].setText(res);
 			ventana.getCajaTexto().setText(convierteABase(Integer.valueOf(ventana.getlBase()[1].getText().split("\\.")[0]), base));
 			actualizaBases();
+			new Pronuncia(convierteABase(Integer.valueOf(ventana.getlBase()[1].getText().split("\\.")[0]), base));
 		}
 	}
 	private String suma() {
@@ -527,6 +556,19 @@ public class ManejadorEventos implements ActionListener {
 		acumulador=acumulador%valorPantalla();
 		return acuStr();
 	}
+	private void suena(String archivo) {
+		Clip sonido=null;
+
+		try {
+			sonido = AudioSystem.getClip();
+			sonido.open(AudioSystem.getAudioInputStream(new File(archivo)));
+			sonido.start();
+		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
 	private String acuStr() {
 		return Double.toString(acumulador);
 	}

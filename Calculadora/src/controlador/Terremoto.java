@@ -24,15 +24,12 @@ public class Terremoto implements Runnable{
 
 	@Override
 	public void run() {
-		Clip sonido1=null, sonido2=null;
+		Clip sonido1=null;
 
 		try {
 			sonido1 = AudioSystem.getClip();
 			sonido1.open(AudioSystem.getAudioInputStream(new File("thanos1.wav")));
 			sonido1.start();
-//			sonido2 = AudioSystem.getClip();
-//			sonido2.open(AudioSystem.getAudioInputStream(new File("thanos2.wav")));
-//			sonido2.start();
 		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -328,7 +328,6 @@ public class Ventana extends JFrame {
 			codigoMatrix[l].setFont(fuenteMatrix);
 			add(codigoMatrix[l]);
 		}
-
 		
 	}
 

@@ -78,6 +78,7 @@ public class Matrix implements Runnable{
 			}
 		}
 		ventana.getCajaTexto().setText("Bienvenido al mundo real");
+		new Pronuncia("Bienvenido al mundo real");
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
