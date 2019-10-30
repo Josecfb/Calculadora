@@ -9,10 +9,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 public class Pronuncia implements Runnable{
+	private static final String SRC_SONIDOS = "src/sonidos/";
 	private Thread hilo;
 	private String palabras;
 	
-	
+	//Hilo que reproduce archivos de sonido cuyos nombres recibe en la cadena palabras
 	
 	public Pronuncia(String palabras) {
 		this.palabras = palabras;
@@ -33,18 +34,25 @@ public class Pronuncia implements Runnable{
 			e1.printStackTrace();
 		}
 	}
+	
+	//ste
+	
 	@Override
 	public void run() {
+		if (palabras.equals("sayonara")) {
+			suena(SRC_SONIDOS+"sayonara.wav");
+			return;
+		}
 		if (palabras.equals("No posees las gemas")) {
-			suena("infinito.wav");
+			suena(SRC_SONIDOS+"infinito.wav");
 			return;
 		}
 		if (palabras.equals("Matrix te posee")) {
-			suena("teposee.wav");
+			suena(SRC_SONIDOS+"teposee.wav");
 			return;
 		}
 		if (palabras.equals("Bienvenido al mundo real")) {
-			suena("real.wav");
+			suena(SRC_SONIDOS+"real.wav");
 			return;
 		}
 		if(!palabras.contains("primo"))
@@ -58,9 +66,9 @@ public class Pronuncia implements Runnable{
 			
 
 			if (palabras.charAt(l)=='.')
-				suena("coma.wav");
+				suena(SRC_SONIDOS+"coma.wav");
 			else
-				suena(palabras.charAt(l)+".wav");
+				suena(SRC_SONIDOS+palabras.charAt(l)+".wav");
 		
 	}
 

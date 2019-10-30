@@ -21,14 +21,17 @@ public class Terremoto implements Runnable{
 		hilo.start();
 	}
 
-
+	
+	//Este hilo mueve la ventana y los botones cuando el resultado de una operación es infinito o aproximado
+	//provocando la furia de Thanos que nos transmite que no poseemos las gemas del infinito
+	
 	@Override
 	public void run() {
 		Clip sonido1=null;
-
+		if (ventana.isVoz())
 		try {
 			sonido1 = AudioSystem.getClip();
-			sonido1.open(AudioSystem.getAudioInputStream(new File("thanos1.wav")));
+			sonido1.open(AudioSystem.getAudioInputStream(new File("src/sonidos/thanos1.wav")));
 			sonido1.start();
 		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 			// TODO Auto-generated catch block

@@ -12,7 +12,7 @@ public class ManejadorTeclado implements KeyListener{
 		super();
 		this.ventana = ventana;
 	}
-
+	// Al pulsar teclas hace click en los botones
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode()==10)
@@ -31,10 +31,7 @@ public class ManejadorTeclado implements KeyListener{
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-//		for (int b=0;b<ventana.getBoton().length-1;b++)
-//			if(e.getKeyChar()==ventana.getBoton()[b].getName().charAt(0))
-//			//	ventana.getBoton()[b].doClick();
-//		System.out.println(e.getKeyChar());
+
 		
 	}
 

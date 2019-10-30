@@ -1,15 +1,17 @@
 package vista;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -25,17 +27,20 @@ import javax.swing.border.SoftBevelBorder;
 
 import controlador.*;
 
-public class Ventana extends JFrame {
-	private static final long serialVersionUID = 1L;
+public class Ventana extends JFrame{
+
+	private static final String SRC_IMG = "src/img/";
+	private static final long serialVersionUID = 8410119930200270173L;
 	private static final int ALTO_BOT = 0;
 	private static final int ANCHO_BOT = 0;
 	private static final int DY=10;
+	private JFrame aviso;
 	private JButton boton[] =new JButton[38]; //Array de botones--------------------------------
-	private JCheckBox interruptor[]=new JCheckBox[2];
-	private JLabel eInterruptor[]=new JLabel[2];
+	private JCheckBox interruptor[]=new JCheckBox[3];
+	private JLabel eInterruptor[]=new JLabel[3];
 	private JLabel labelAcu;
 	private JLabel cajaTexto;
-	private JLabel[] codigoMatrix=new JLabel[20];
+	private JLabel[] codigoMatrix=new JLabel[100];
 	private JLabel lBase[]=new JLabel[4];
 	private ButtonGroup gSistemas;
 	private JRadioButton rSistema[]=new JRadioButton[4];
@@ -43,6 +48,7 @@ public class Ventana extends JFrame {
 	private JMenu tipo;
 	private JMenuItem estandar,cientifica,programador;
 	private boolean esProgramador=false;
+	private boolean voz=false;
 	Font miFuente=new Font("Calibri", Font.PLAIN, 22);
 	Font intFuente=new Font("Calibri", Font.PLAIN, 11);
 	Font fuentePantalla=new Font("Calibri", Font.PLAIN, 30);
@@ -53,12 +59,14 @@ public class Ventana extends JFrame {
 
 	
 	public Ventana() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
 		setLayout(null);
 		setVisible(true);
 		setResizable(false);
 		setSize(326,410);
 		setLocationRelativeTo(null);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(SRC_IMG+"icono.png"));
 		inicializarComponentes();
 		colores =new Colores(this,false);
 		colores.pausar();
@@ -73,45 +81,66 @@ public class Ventana extends JFrame {
 	}
 
 	private void inicializarComponentes() {
+		double w=0,he=0;
+		 do{
+			he++;
+			w+=0.795;
+			this.setSize((int)w,(int)he);
+			setLocationRelativeTo(null);
+		}while (he<410);
+		this.setSize(326,410);
+		Dimension tamaPantalla = Toolkit.getDefaultToolkit().getScreenSize();
+		int anchoVentana=(int)tamaPantalla.getWidth();
+		int altoPantalla=(int)tamaPantalla.getHeight();
+		Icon off=new ImageIcon(new ImageIcon(SRC_IMG+"off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT));
+		
+		//Menús ------------------------------
+		
 		barra=new JMenuBar();
 		barra.setBounds(0, 0, this.getWidth(), 30);
 		add(barra);
 		tipo=new JMenu("Estandar");
-		barra.add(tipo);
+		
 		estandar =new JMenuItem("Estándar");
 		cientifica=new JMenuItem("Científica");
 		programador=new JMenuItem("Programador");
+		barra.add(tipo);
 		tipo.add(estandar);
 		tipo.add(cientifica);
 		tipo.add(programador);
 		
-		interruptor[0]=new JCheckBox();
-		interruptor[0].setBounds(10, 85, 40, 20);
-		interruptor[0].setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
-		interruptor[0].setName("color");
-		interruptor[0].setOpaque(false);
-		add(interruptor[0]);
-		interruptor[0].setVisible(false);
+		//Crea interruptores
+		for (int i=0;i<interruptor.length;i++) {
+			interruptor[i]=new JCheckBox();
+			interruptor[i].setBounds(i*50+5,85,40,20);
+			interruptor[i].setIcon(off);
+			interruptor[i].setOpaque(false);
+			add(interruptor[i]);
+			eInterruptor[i]=new JLabel();
+			eInterruptor[i].setBounds(50*i+10, 100, 80, 20);
+			eInterruptor[i].setFont(intFuente);
+			add(eInterruptor[i]);
+		}
+		
+
+		interruptor[0].setName("voz");
 		interruptor[0].setVisible(true);
-		eInterruptor[0]=new JLabel("Interfaz TS");
-		eInterruptor[0].setBounds(7,100,80,20);
-		eInterruptor[0].setFont(intFuente);
-		add(eInterruptor[0]);
+		eInterruptor[0].setText("Sonido");
+		eInterruptor[0].setVisible(true);
 		
+		interruptor[1].setName("color");
+		interruptor[1].setVisible(true);
+		eInterruptor[1].setBounds(68,100,80,20);
+		eInterruptor[1].setText("ITS");
+		eInterruptor[1].setVisible(true);
 		
-		interruptor[1]=new JCheckBox();
-		interruptor[1].setBounds(80, 85, 40, 20);
-		interruptor[1].setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
-		interruptor[1].setName("teseracto");
-		interruptor[1].setOpaque(false);
-		add(interruptor[1]);
-		interruptor[1].setVisible(false);
-		eInterruptor[1]=new JLabel("Teseracto");
-		eInterruptor[1].setBounds(75,100,80,20);
-		eInterruptor[1].setFont(intFuente);
-		add(eInterruptor[1]);
-		eInterruptor[1].setVisible(false);
+		interruptor[2].setName("teseracto");
+		interruptor[2].setVisible(false);
+		eInterruptor[2].setBounds(105,100,80,20);
+		eInterruptor[2].setText("Teseracto");
+		eInterruptor[2].setVisible(false);
 		
+
 		
 		//Pinta Botones numéricos
 		int b=0;
@@ -152,7 +181,7 @@ public class Ventana extends JFrame {
 		b++; //16
 		boton[b]=new JButton();
 		boton[b].setBounds(160, 120+DY, ANCHO_BOT, ALTO_BOT);
-		boton[b].setIcon(new ImageIcon(new ImageIcon("retro.png").getImage().getScaledInstance(28, 28, Image.SCALE_DEFAULT)));
+		boton[b].setIcon(new ImageIcon(new ImageIcon(SRC_IMG+"retro.png").getImage().getScaledInstance(28, 28, Image.SCALE_DEFAULT)));
 		boton[b].setName("borra");
 		b++;//17
 		boton[b]=new JButton("±");
@@ -172,17 +201,17 @@ public class Ventana extends JFrame {
 		boton[b]=new JButton();
 		boton[b].setBounds(80,70+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("raizcuadrada");
-		boton[b].setIcon(new ImageIcon(new ImageIcon("raiz.png").getImage().getScaledInstance(28, 28, Image.SCALE_DEFAULT)));
+		boton[b].setIcon(new ImageIcon(new ImageIcon(SRC_IMG+"raiz.png").getImage().getScaledInstance(28, 28, Image.SCALE_DEFAULT)));
 		b++;//21
 		boton[b]=new JButton();
 		boton[b].setBounds(240, 70+DY, ANCHO_BOT, ALTO_BOT);
 		boton[b].setName("inversa");
-		boton[b].setIcon(new ImageIcon(new ImageIcon("inversa.png").getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT)));
+		boton[b].setIcon(new ImageIcon(new ImageIcon(SRC_IMG+"inversa.png").getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT)));
 		b++;//22
 		boton[b]=new JButton("");
 		boton[b].setBounds(160,70+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("cuadrado");
-		boton[b].setIcon(new ImageIcon(new ImageIcon("cuadrado.png").getImage().getScaledInstance(28, 28, Image.SCALE_DEFAULT)));
+		boton[b].setIcon(new ImageIcon(new ImageIcon(SRC_IMG+"cuadrado.png").getImage().getScaledInstance(28, 28, Image.SCALE_DEFAULT)));
 		b++;//23
 		boton[b]=new JButton("n!");
 		boton[b].setBounds(0,70+DY,ANCHO_BOT,ALTO_BOT);
@@ -191,12 +220,12 @@ public class Ventana extends JFrame {
 		boton[b]=new JButton();
 		boton[b].setBounds(80,20+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("#");//raiz enesima
-		boton[b].setIcon(new ImageIcon(new ImageIcon("raizenesima.png").getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT)));
+		boton[b].setIcon(new ImageIcon(new ImageIcon(SRC_IMG+"raizenesima.png").getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT)));
 		b++;//25
 		boton[b]=new JButton();
 		boton[b].setBounds(160,20+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("@");//potencia enesima
-		boton[b].setIcon(new ImageIcon(new ImageIcon("potenciaenesima.png").getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)));
+		boton[b].setIcon(new ImageIcon(new ImageIcon(SRC_IMG+"potenciaenesima.png").getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)));
 		b++;//26
 		boton[b]=new JButton("pri?");
 		boton[b].setBounds(0,20+DY,ANCHO_BOT,ALTO_BOT);
@@ -209,7 +238,7 @@ public class Ventana extends JFrame {
 		boton[b]=new JButton();
 		boton[b].setBounds(0,-30+DY,ANCHO_BOT,ALTO_BOT);
 		boton[b].setName("pi");//pi
-		boton[b].setIcon(new ImageIcon(new ImageIcon("pi.png").getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)));
+		boton[b].setIcon(new ImageIcon(new ImageIcon(SRC_IMG+"pi.png").getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)));
 		b++;//29
 		boton[b]=new JButton("sen");
 		boton[b].setBounds(80,-30+DY,ANCHO_BOT,ALTO_BOT);
@@ -272,6 +301,8 @@ public class Ventana extends JFrame {
 		cajaTexto.requestFocus();
 		add(cajaTexto);
 		cajaTexto.setText("0");
+		
+		//Crea los visores en distintas bases de numeración
 		rSistema[0]=new JRadioButton("HEX");
 		rSistema[1]=new JRadioButton("DEC");
 		rSistema[2]=new JRadioButton("OCT");
@@ -290,12 +321,14 @@ public class Ventana extends JFrame {
 			lBase[s]=new JLabel("0");
 			lBase[s].setBounds(80, 120+s*30, 386, 30);
 			lBase[s].setOpaque(true);
-			//lBase[s].setBorder(new SoftBevelBorder(BevelBorder.LOWERED));
-			//lBase[s].setBorderPainted(false);
+//			lBase[s].setBorder(new SoftBevelBorder(BevelBorder.LOWERED));
+			lBase[s].setBorder(null);
 			lBase[s].setFont(miFuente);
 			add(lBase[s]);
 			lBase[s].setVisible(false);
+			
 		}
+		lBase[1].setBorder(new SoftBevelBorder(BevelBorder.LOWERED));
 		rSistema[1].setSelected(true);
 		rSistema[1].setBorderPainted(true);
 		rSistema[1].setFont(new Font("Calibri", Font.BOLD, 22));
@@ -307,20 +340,21 @@ public class Ventana extends JFrame {
 		try {
 			 myStream = new BufferedInputStream(new FileInputStream("src/matrix code nfi.ttf"));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Font fuenteMatrix=null;
 		try {
 			fuenteMatrix = Font.createFont(Font.TRUETYPE_FONT, myStream);
 		} catch (FontFormatException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		fuenteMatrix = fuenteMatrix.deriveFont(Font.PLAIN, 26);
+		
+		//Etiquetas que serán llamada desde la clase Matrix
+		
 		for (int l=0;l<codigoMatrix.length;l++) {
 			codigoMatrix[l]=new JLabel();
-			codigoMatrix[l].setBounds(0, l*30, 320, 30);
+			codigoMatrix[l].setBounds(0, l*30, anchoVentana, 30);
 			codigoMatrix[l].setOpaque(true);
 			codigoMatrix[l].setVisible(false);
 			codigoMatrix[l].setBackground(new Color(0,0,0));
@@ -340,6 +374,8 @@ public class Ventana extends JFrame {
 		add(boton[b]);
 	}
 	
+	
+	//Establece manejador para botones
 	public void EstablecerManejador(ManejadorEventos manejador) {
 
 		for(int b=0;b<boton.length;b++) 
@@ -349,14 +385,19 @@ public class Ventana extends JFrame {
 		for (int s=0;s<rSistema.length;s++)
 			rSistema[s].addActionListener(manejador);
 	}
+	//Establece manejador para elementos del menú
 	public void EstableceManejadorMenu(ManejadorMenu manejador) {
 		estandar.addActionListener(manejador);
 		cientifica.addActionListener(manejador);
 		programador.addActionListener(manejador);
 	}
-
+	//Establece manejador para teclado
 	public void EstablecerManejadorTeclado(ManejadorTeclado manejador) {
 		this.addKeyListener(manejador);
+	}
+	////Establece manejador para eventos de la ventana (cerrar ventana)
+	public void EstablecerManejadorVentana(ManejadorVentana manejador) {
+		this.addWindowListener(manejador);
 	}
 
 	public JLabel getCajaTexto() {
@@ -416,6 +457,21 @@ public class Ventana extends JFrame {
 	}
 	public JLabel[] getCodigoMatrix() {
 		return codigoMatrix;
+	}
+	public boolean isVoz() {
+		return voz;
+	}
+	public void setVoz(boolean voz) {
+		this.voz = voz;
+	}
+	public JFrame getAviso() {
+		return aviso;
 	}	
+	public void maximizar() {
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
+	}
+	public void restaurar() {
+		setExtendedState(JFrame.NORMAL);
+	}
 	
 }

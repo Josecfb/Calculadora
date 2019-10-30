@@ -17,18 +17,9 @@ public class Colores  implements Runnable{
 		hilo.start();
 		//hilo.suspend();
 	}
-
-	@SuppressWarnings("deprecation")
-	public synchronized void pausar() {
-			hilo.suspend();
-	}
-	@SuppressWarnings("deprecation")
-	public synchronized void reanudar() {
-
-
-		hilo.resume();
-	}
-	
+	//-----------------------------------------------------
+	//Hilo que cambia el color de los elementos de forma gradual
+	//---------------------------------------------------------
 	@Override
 	public void run() {
 		int abajo=180;
@@ -113,5 +104,14 @@ public class Colores  implements Runnable{
 	public void setPausa(boolean pausa) {
 		this.pausa = pausa;
 	}
+	@SuppressWarnings("deprecation")
+	public synchronized void pausar() {
+			hilo.suspend();
+	}
+	@SuppressWarnings("deprecation")
+	public synchronized void reanudar() {
 
+
+		hilo.resume();
+	}
 }

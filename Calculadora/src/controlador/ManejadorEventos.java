@@ -11,9 +11,11 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
@@ -22,6 +24,8 @@ import javax.swing.border.SoftBevelBorder;
 import vista.Ventana;
 
 public class ManejadorEventos implements ActionListener {
+	private static final String SRC_IMG = "src/img/";
+	private static final String SRC_SONIDOS = "src/sonidos/";
 	private static final String MATRIX = "Matrix te posee";
 	private static final String INFINITO = "No posees las gemas";
 	private Ventana ventana; 
@@ -29,105 +33,73 @@ public class ManejadorEventos implements ActionListener {
 	char funcion='=';
 	boolean opera=true;
 	double acumulador=0;
-	private int base=10;
-
+	int base=10;
+	//Constructor
 	public ManejadorEventos(Ventana ventana) {
 		this.ventana=ventana;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		//Dependiendo del tipo de objeto de donde provenga el evento bifurca a uno de los tres métodos
 		if (e.getSource() instanceof JButton) 
 			botones(e);
-		
 		if (e.getSource() instanceof JRadioButton)
 			radios(e);
-		
 		if (e.getSource() instanceof JCheckBox)
 			interruptores(e);
 	}
-	
+	//Controla los tres interruptores
 	private void interruptores(ActionEvent  e) {
+		quitafoco();
 		JCheckBox casilla=(JCheckBox) e.getSource();
 		String nomCas=casilla.getName();
-		if (nomCas.equals("color")) {
-			if (!color) {
-				suena("interfaceTS2.wav");
-				color=true;
-				System.out.println("color");
-				ventana.geteInterruptor()[1].setVisible(true);
-				ventana.getInterruptor()[1].setVisible(true);
-				casilla.setIcon(new ImageIcon(new ImageIcon("on.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
-				int abajo=180;
-				int[] r =new int[ventana.getBoton().length];
-				int[] g =new int[ventana.getBoton().length];
-				int[] b =new int[ventana.getBoton().length];
-				int[] rb =new int[ventana.getlBase().length];
-				int[] gb =new int[ventana.getlBase().length];
-				int[] bb =new int[ventana.getlBase().length];
-				for (int i=0;i<=ventana.geteInterruptor().length-1;i++)
-					ventana.geteInterruptor()[i].setForeground(new Color(255,255,255));
-				for (int bo=0;bo<ventana.getBoton().length;bo++) {
-					r[bo]=(int)(Math.random()*(254-abajo)+abajo);
-					g[bo]=(int)(Math.random()*(254-abajo)+abajo);
-					b[bo]=(int)(Math.random()*(254-abajo)+abajo);
-					ventana.getBoton()[bo].setBackground(new Color(r[bo],g[bo],b[bo]));
-				}
-				for (int ba=0;ba<ventana.getlBase().length;ba++) {
-					rb[ba]=(int)(Math.random()*(254-abajo)+abajo);
-					gb[ba]=(int)(Math.random()*(254-abajo)+abajo);
-					bb[ba]=(int)(Math.random()*(254-abajo)+abajo);
-					ventana.getlBase()[ba].setBackground(new Color(rb[ba],gb[ba],bb[ba]));
-				}
-				ventana.getCajaTexto().setBackground(new Color(r[5], g[4], b[8]));
-				ventana.getContentPane().setBackground(new Color(r[1]-99,g[2]-99,b[3]-99));
-				ventana.getBarra().setBackground(new Color(r[10],g[11],b[12]));
-				ventana.getEstandar().setBackground(new Color(r[10],g[11],b[12]));
-				ventana.getCientifica().setBackground(new Color(r[10],g[11],b[12]));
-				ventana.getProgramador().setBackground(new Color(r[10],g[11],b[12]));
-				for (int s=0;s<ventana.getSistema().length;s++)
-					ventana.getSistema()[s].setForeground(new Color(255,255,255));
-					
-			}else {
-				suena("interfaceTS.wav");
-				ventana.geteInterruptor()[1].setVisible(false);
-				ventana.getInterruptor()[1].setVisible(false);
-				for (int i=0;i<=ventana.geteInterruptor().length-1;i++)
-					ventana.geteInterruptor()[i].setForeground(new Color(0,0,0));
-				casilla.setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
-				for (int bo=0;bo<ventana.getBoton().length;bo++) 
-					ventana.getBoton()[bo].setBackground(null);
-				for (int ba=0;ba<ventana.getlBase().length;ba++)
-					ventana.getlBase()[ba].setBackground(null);
-				ventana.getCajaTexto().setBackground(null);
-				ventana.getContentPane().setBackground(null);
-				ventana.getBarra().setBackground(null);
-				ventana.getEstandar().setBackground(null);
-				ventana.getCientifica().setBackground(null);
-				ventana.getProgramador().setBackground(null);
-				for (int s=0;s<ventana.getSistema().length;s++)
-					ventana.getSistema()[s].setForeground(new Color(0,0,0));
-				color=false;
-			}
-		}
-		
+		Icon on=new ImageIcon(new ImageIcon(SRC_IMG+"on.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT));
+		Icon off=new ImageIcon(new ImageIcon(SRC_IMG+"off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT));
+		//Activa desactiva los colores ("Interface Teseracto")
+		if (nomCas.equals("color")) 
+			if (!color) 
+				activaColor(casilla, on);
+			else 
+				if (psico)
+					JOptionPane.showMessageDialog(ventana.getAviso(), "No puedes retirar el interface del Teseractor si este está conectado"
+							+ " ya que podrias ocasionar una catastrofe planetaria.\nPrimero desconecta el Teseracto y despues retira el interface.", "Peligro de destrucción masiva",0);
+				else
+					desactivaColor(casilla, off);
+		//Activa desctiva el Teseracto
 		if (nomCas.equals("teseracto")) {
 			if (psico) {
-				suena("teseracto_off.wav");
-				casilla.setIcon(new ImageIcon(new ImageIcon("off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
+				if (color) {
+				suena(SRC_SONIDOS+"teseracto_off.wav");
+				casilla.setIcon(off);
 				psico=false;
 				ventana.pausar();
-				
+			}	
 			}else {
-				suena("teseracto_on.wav");
-				casilla.setIcon(new ImageIcon(new ImageIcon("on.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT)));
+				suena(SRC_SONIDOS+"teseracto_on.wav");
+				casilla.setIcon(on);
 				psico=true;
 				ventana.reanudar();
 			}
 		}
-	
+		//Activa desctiva el sonido de la aplicación
+		if (nomCas.equals("voz"))
+			if (ventana.isVoz()) {
+				casilla.setIcon(off);
+				ventana.setVoz(false);
+			}else {
+				
+				JOptionPane.showMessageDialog(ventana.getAviso(), "Conecta los altavoces", "Sonido activado",1);
+
+				casilla.setIcon(on);
+				ventana.setVoz(true);
+			}
+				
+				
 	}
-	
+
+
+	// controla los radioButtons que cambian de base en la calculadora Programador
 	private void radios(ActionEvent e) {
 		quitafoco();
 		JRadioButton radio=(JRadioButton) e.getSource();
@@ -137,24 +109,28 @@ public class ManejadorEventos implements ActionListener {
 			if (ventana.getSistema()[r].isSelected()) {
 				ventana.getSistema()[r].setBorderPainted(true);
 				ventana.getlBase()[r].setBorder(new SoftBevelBorder(BevelBorder.LOWERED));
+				
 				ventana.getSistema()[r].setFont(new Font("Calibri", Font.BOLD, 22));
 			}else {
 				ventana.getSistema()[r].setBorderPainted(false);
 				ventana.getSistema()[r].setFont(new Font("Calibri", Font.PLAIN, 22));
 				ventana.getlBase()[r].setBorder(null);
 			}
+		//activa base hexadecimal
 		if (texRa.equals("HEX")) {
 			activadecimal(true);
 			activahexadecimal(true);
 			base=16;
 			cambiaBase();
 		}
+		//activa base decimal
 		if (texRa.equals("DEC")) {
 			activahexadecimal(false);
 			activadecimal(true);
 			base=10;
 			cambiaBase();
 		}
+		//activa base octal
 		if (texRa.equals("OCT")) {
 			activahexadecimal(false);
 			activadecimal(false);
@@ -162,6 +138,7 @@ public class ManejadorEventos implements ActionListener {
 			base=8;
 			cambiaBase();
 		}
+		//activa base binaria
 		if (texRa.equals("BIN")) {
 			activahexadecimal(false);
 			activadecimal(false);
@@ -172,23 +149,28 @@ public class ManejadorEventos implements ActionListener {
 		}
 	
 	}
-
+	//Pone en el visor de la calculadora el contenido del visor decimal en la base actual
 	private void cambiaBase() {
 		ventana.getCajaTexto().setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), base));
 	}
+	//habilita/deshabilita los botones de digitos decimales 
 	private void activadecimal(boolean activa) {
 		for (int b=0;b<=9;b++) 
 			ventana.getBoton()[b].setEnabled(activa);
 	}
+	//habilita/deshabilita los botones de digitos hexadecimales
 	private void activahexadecimal(boolean activa) {
 		for (int b=32;b<=37;b++)
 			ventana.getBoton()[b].setEnabled(activa);
 	}
+	//habilita/deshabilita los botones de digitos octales
 	private void activaoctal(boolean activa) {
 		for (int b=0;b<=7;b++)
 			ventana.getBoton()[b].setEnabled(activa);
 	}
+	// Controla los eventos sobre botones
 	private void botones(ActionEvent e) {
+		quitaP();
 		quitafoco();
 		JButton boton=(JButton) e.getSource();
 		String nomBo="";
@@ -253,16 +235,17 @@ public class ManejadorEventos implements ActionListener {
 
 		e=null;
 	}
-
+	//prepara para operar
 	private void total() {
 		sacaAcuDeCaja();
 		opera();
 		funcion='=';
 	}
-
+	
 	private void numOpera(String co) {
+		//Pasa los digitos pulsados al visor de la calculadora
 		if ((co.compareTo("0")>=0 && co.compareTo("9")<=0)||(co.compareTo("A")>=0 && co.compareTo("F")<=0)) {
-			suena(co+".wav");
+			suena(SRC_SONIDOS+co+".wav");
 			if (opera||ventana.getCajaTexto().getText().equals("0")) {
 				ventana.getCajaTexto().setText(co);
 				if (ventana.isEsProgramador()) actualizaBases();
@@ -274,20 +257,21 @@ public class ManejadorEventos implements ActionListener {
 		}
 		//coma
 		if (co.equals(".") && !ventana.getCajaTexto().getText().contains(".")) {
-			suena("coma.wav");
+			suena(SRC_SONIDOS+"coma.wav");
 			ventana.getCajaTexto().setText(ventana.getCajaTexto().getText()+co);
 		}
+		//sonidos de operadores
 		if ("=+-*/#@R".contains(co)) {
 			switch (co) {
 			case "*":
-				suena("x.wav");
+				suena(SRC_SONIDOS+"x.wav");
 				break;
 			case "/":
-				suena("en.wav");
+				suena(SRC_SONIDOS+"en.wav");
 				break;
 			default:
 				if (!"#@R".contains(co))
-				suena(co+".wav");
+				suena(SRC_SONIDOS+co+".wav");
 				break;
 			}
 			
@@ -296,7 +280,7 @@ public class ManejadorEventos implements ActionListener {
 			System.out.println(funcion);
 		}
 	}
-
+	//cambia la base de numeracion predeterminada
 	private void actualizaBases() {
 		int i=1;	
 		switch (base) {
@@ -321,17 +305,17 @@ public class ManejadorEventos implements ActionListener {
 		ventana.getlBase()[2].setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), 8));
 		ventana.getlBase()[3].setText(convierteABase(Integer.parseInt(ventana.getlBase()[1].getText()), 2));
 	}
-
+	//asigna a acumulador el valor del visor de la calculadora
 	private void sacaAcuDeCaja() {
 		if (!ventana.isEsProgramador())
 			acumulador=valorPantalla();
 		else acumulador =valorDecimal();
 	}
-
+	//devuelve el balor de la base decimal en double
 	private Double valorDecimal() {
 		return Double.valueOf(ventana.getlBase()[1].getText());
 	}
-
+	//bifurca segun el tipo de operación
 	private void opera() {
 		if (funcion=='=')
 			sacaAcuDeCaja();
@@ -352,6 +336,7 @@ public class ManejadorEventos implements ActionListener {
 			case 'x':
 				saca(masmenos());
 				break;
+				
 			case 'i':
 				saca(inversa());
 				break;
@@ -393,27 +378,35 @@ public class ManejadorEventos implements ActionListener {
 			}
 		opera=true;
 	}
-
+	//retorna un double con el valor del visor
 	private Double valorPantalla() {
 		if (!ventana.isEsProgramador())
 			return Double.valueOf(ventana.getCajaTexto().getText());
 		else return Double.valueOf(ventana.getlBase()[1].getText());
 	}
+	//Muestra y pronuncia el resultado de una operación en el visor
 	private void saca(String res) {
 		if (res.equals("Infinity")) {
 			ventana.getCajaTexto().setText(INFINITO);
-			new Pronuncia(INFINITO);
+			if (ventana.isVoz()) suena(SRC_SONIDOS+"infin.wav");
+			if (ventana.isVoz()) new Pronuncia(INFINITO);
 			new Terremoto(ventana);
-			saca("0");
+			try {
+				Thread.sleep(6000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ventana.getCajaTexto().setText("0");
 		}else if (!ventana.isEsProgramador()) {
 				ventana.getCajaTexto().setText(res);
-				new Pronuncia(res);
+				if (ventana.isVoz()) new Pronuncia(res);
 		}
 		else {
 			ventana.getlBase()[1].setText(res);
 			ventana.getCajaTexto().setText(convierteABase(Integer.valueOf(ventana.getlBase()[1].getText().split("\\.")[0]), base));
 			actualizaBases();
-			new Pronuncia(convierteABase(Integer.valueOf(ventana.getlBase()[1].getText().split("\\.")[0]), base));
+			if (ventana.isVoz()) new Pronuncia(convierteABase(Integer.valueOf(ventana.getlBase()[1].getText().split("\\.")[0]), base));
 		}
 	}
 	private String suma() {
@@ -437,8 +430,9 @@ public class ManejadorEventos implements ActionListener {
 			acumulador=0;
 			funcion='=';
 			opera=true;
+			suena(SRC_SONIDOS+"infin.wav");
 			new Terremoto(ventana);
-			saca("0");
+			ventana.getCajaTexto().setText("0");
 			return INFINITO;
 		}
 		else {
@@ -516,7 +510,7 @@ public class ManejadorEventos implements ActionListener {
 			return "Solo números enteros";
 		}
 	}
-	
+	//convierte un decimal a cualquier base
 	private String convierteABase(int n,int base) {
 		int entero=n;
 		int num;
@@ -529,6 +523,7 @@ public class ManejadorEventos implements ActionListener {
 		resultado=resto(entero).concat(resultado);
 		return resultado;
 	}
+	//convierte una cadena en cualquier base a decimal
 	private String convierteADecimal(String cadena,int base) {
 		int decimal=0;
 		char digito;
@@ -543,6 +538,7 @@ public class ManejadorEventos implements ActionListener {
 		}
 		return String.valueOf(decimal);
 	}
+	//para r entre 10 y 15 devuelve letras entre A y F
 	private String sacaLetra(int r) {
 		return String.valueOf((char)((r-10)+'A'));
 	}
@@ -556,18 +552,20 @@ public class ManejadorEventos implements ActionListener {
 		acumulador=acumulador%valorPantalla();
 		return acuStr();
 	}
+	//reproduce archivos de sonido dependiendo de la cadena que recibe
 	private void suena(String archivo) {
 		Clip sonido=null;
-
-		try {
-			sonido = AudioSystem.getClip();
-			sonido.open(AudioSystem.getAudioInputStream(new File(archivo)));
-			sonido.start();
-		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		if (ventana.isVoz()) 
+			try {
+				sonido = AudioSystem.getClip();
+				sonido.open(AudioSystem.getAudioInputStream(new File(archivo)));
+				sonido.start();
+			} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 	}
+
 
 	private String acuStr() {
 		return Double.toString(acumulador);
@@ -591,4 +589,68 @@ public class ManejadorEventos implements ActionListener {
 	private void quitafoco() {
 		ventana.requestFocus();
 	}	
+	//colorea botones y etiquetas
+	private void activaColor(JCheckBox casilla, Icon on) {
+		suena(SRC_SONIDOS+"interfaceTS2.wav");
+		color=true;
+		System.out.println("color");
+		ventana.geteInterruptor()[2].setVisible(true);
+		ventana.getInterruptor()[2].setVisible(true);
+		casilla.setIcon(on);
+		int abajo=180;
+		int[] r =new int[ventana.getBoton().length];
+		int[] g =new int[ventana.getBoton().length];
+		int[] b =new int[ventana.getBoton().length];
+		int[] rb =new int[ventana.getlBase().length];
+		int[] gb =new int[ventana.getlBase().length];
+		int[] bb =new int[ventana.getlBase().length];
+		for (int i=0;i<=ventana.geteInterruptor().length-1;i++)
+			ventana.geteInterruptor()[i].setForeground(new Color(255,255,255));
+		for (int bo=0;bo<ventana.getBoton().length;bo++) {
+			r[bo]=(int)(Math.random()*(254-abajo)+abajo);
+			g[bo]=(int)(Math.random()*(254-abajo)+abajo);
+			b[bo]=(int)(Math.random()*(254-abajo)+abajo);
+			ventana.getBoton()[bo].setBackground(new Color(r[bo],g[bo],b[bo]));
+		}
+		for (int ba=0;ba<ventana.getlBase().length;ba++) {
+			rb[ba]=(int)(Math.random()*(254-abajo)+abajo);
+			gb[ba]=(int)(Math.random()*(254-abajo)+abajo);
+			bb[ba]=(int)(Math.random()*(254-abajo)+abajo);
+			ventana.getlBase()[ba].setBackground(new Color(rb[ba],gb[ba],bb[ba]));
+		}
+		ventana.getCajaTexto().setBackground(new Color(r[5], g[4], b[8]));
+		ventana.getContentPane().setBackground(new Color(r[1]-99,g[2]-99,b[3]-99));
+		ventana.getBarra().setBackground(new Color(r[10],g[11],b[12]));
+		ventana.getEstandar().setBackground(new Color(r[10],g[11],b[12]));
+		ventana.getCientifica().setBackground(new Color(r[10],g[11],b[12]));
+		ventana.getProgramador().setBackground(new Color(r[10],g[11],b[12]));
+		for (int s=0;s<ventana.getSistema().length;s++)
+			ventana.getSistema()[s].setForeground(new Color(255,255,255));
+	}
+	//quita colores
+	private void desactivaColor(JCheckBox casilla, Icon off) {
+		suena(SRC_SONIDOS+"interfaceTS.wav");
+		ventana.geteInterruptor()[2].setVisible(false);
+		ventana.getInterruptor()[2].setVisible(false);
+		for (int i=0;i<=ventana.geteInterruptor().length-1;i++)
+			ventana.geteInterruptor()[i].setForeground(new Color(0,0,0));
+		casilla.setIcon(off);
+		for (int bo=0;bo<ventana.getBoton().length;bo++) 
+			ventana.getBoton()[bo].setBackground(null);
+		for (int ba=0;ba<ventana.getlBase().length;ba++)
+			ventana.getlBase()[ba].setBackground(null);
+		ventana.getCajaTexto().setBackground(null);
+		ventana.getContentPane().setBackground(null);
+		ventana.getBarra().setBackground(null);
+		ventana.getEstandar().setBackground(null);
+		ventana.getCientifica().setBackground(null);
+		ventana.getProgramador().setBackground(null);
+		for (int s=0;s<ventana.getSistema().length;s++)
+			ventana.getSistema()[s].setForeground(new Color(0,0,0));
+		color=false;
+	}
+	private void quitaP() {
+		if (ventana.getCajaTexto().getText().contains("primo"))
+			saca("0");
+	}
 }
