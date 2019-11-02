@@ -8,14 +8,8 @@ import java.math.BigDecimal;
 
 public class TareasProgramacion {
 
- /**
-  * Convierte el número que recibe como argumento a su representación escrita con letra.
-  *
-  * @param s Una cadena de texto que contiene los dígitos de un número.
-  * @return  Una cadena de texto que contiene la representación con letra de
-  *          la parte entera del número que se recibió como argumento.
-  */
- public static String cantidadConLetra(String s) {
+
+ public void cantidadConVoz(String s) {
      StringBuilder result = new StringBuilder();
      BigDecimal totalBigDecimal = new BigDecimal(s).setScale(2, BigDecimal.ROUND_DOWN);
      long parteEntera = totalBigDecimal.toBigInteger().longValue();
@@ -26,7 +20,7 @@ public class TareasProgramacion {
 
      if (parteEntera == 0) {
          result.append("Cero ");
-         return result.toString();
+         return;
      }
 
      if (triMilMillones > 0) result.append(triTexto(triMilMillones).toString() + "Mil ");
@@ -38,16 +32,10 @@ public class TareasProgramacion {
      if (triMiles > 0)       result.append(triTexto(triMiles).toString() + "Mil ");
      if (triUnidades > 0)    result.append(triTexto(triUnidades).toString());
 
-     return result.toString();
+     return;
  }
 
- /**
-  * Convierte una cantidad de tres cifras a su representación escrita con letra.
-  *
-  * @param n La cantidad a convertir.
-  * @return  Una cadena de texto que contiene la representación con letra
-  *          del número que se recibió como argumento.
-  */
+
  private static StringBuilder triTexto(int n) {
      StringBuilder result = new StringBuilder();
      int centenas = n / 100;

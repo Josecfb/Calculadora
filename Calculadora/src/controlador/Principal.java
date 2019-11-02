@@ -7,6 +7,7 @@ public class Principal {
 	public static void main(String[] args) {
 		Ventana miVentana=new Ventana();
 		
+		
 		//Crea los objetos manejadores de eventos pasandoles como argumento la ventana
 		
 		ManejadorEventos manejador=new ManejadorEventos(miVentana);

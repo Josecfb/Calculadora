@@ -54,7 +54,7 @@ public class Matrix implements Runnable{
 		for (int l=0;l<ventana.getCodigoMatrix().length;l++)
 			ventana.getCodigoMatrix()[l].setVisible(true);
 		ventana.maximizar();
-		for (int v=1;v<=2500;v++) 
+		for (int v=1;v<=1500;v++) 
 			
 			for (int l=0;l<ventana.getCodigoMatrix().length;l++) {
 				ventana.getCodigoMatrix()[l].setText("");

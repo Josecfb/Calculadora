@@ -20,7 +20,6 @@ import javax.swing.JRadioButton;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 
-//import javax.swing.JLabel;
 import vista.Ventana;
 
 public class ManejadorEventos implements ActionListener {
@@ -51,19 +50,19 @@ public class ManejadorEventos implements ActionListener {
 	}
 	//Controla los tres interruptores
 	private void interruptores(ActionEvent  e) {
-		quitafoco();
+		focoAVentana();
 		JCheckBox casilla=(JCheckBox) e.getSource();
 		String nomCas=casilla.getName();
 		Icon on=new ImageIcon(new ImageIcon(SRC_IMG+"on.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT));
 		Icon off=new ImageIcon(new ImageIcon(SRC_IMG+"off.png").getImage().getScaledInstance(35, 18, Image.SCALE_DEFAULT));
-		//Activa desactiva los colores ("Interface Teseracto")
+		//Activa desactiva los colores ("Interface Teseracto")----------------------------------
 		if (nomCas.equals("color")) 
 			if (!color) 
 				activaColor(casilla, on);
 			else 
 				if (psico)
-					JOptionPane.showMessageDialog(ventana.getAviso(), "No puedes retirar el interface del Teseractor si este está conectado"
-							+ " ya que podrias ocasionar una catastrofe planetaria.\nPrimero desconecta el Teseracto y despues retira el interface.", "Peligro de destrucción masiva",0);
+					JOptionPane.showMessageDialog(ventana.getAviso(), "No puedes retirar el interface del Teseractor si está conectado"
+							+ "\nPodrias ocasionar una catastrofe planetaria.\nPrimero desconecta el Teseracto y despues retira el interface.", "Peligro de destrucción masiva",0);
 				else
 					desactivaColor(casilla, off);
 		//Activa desctiva el Teseracto
@@ -88,20 +87,16 @@ public class ManejadorEventos implements ActionListener {
 				casilla.setIcon(off);
 				ventana.setVoz(false);
 			}else {
-				
 				JOptionPane.showMessageDialog(ventana.getAviso(), "Conecta los altavoces", "Sonido activado",1);
-
 				casilla.setIcon(on);
 				ventana.setVoz(true);
-			}
-				
-				
+			}			
 	}
 
 
 	// controla los radioButtons que cambian de base en la calculadora Programador
 	private void radios(ActionEvent e) {
-		quitafoco();
+		focoAVentana();
 		JRadioButton radio=(JRadioButton) e.getSource();
 		String texRa=radio.getText();
 		System.out.println(texRa);
@@ -171,7 +166,7 @@ public class ManejadorEventos implements ActionListener {
 	// Controla los eventos sobre botones
 	private void botones(ActionEvent e) {
 		quitaP();
-		quitafoco();
+		focoAVentana();
 		JButton boton=(JButton) e.getSource();
 		String nomBo="";
 		nomBo=boton.getName();
@@ -183,8 +178,7 @@ public class ManejadorEventos implements ActionListener {
 				ventana.getCajaTexto().setText("0");
 		}
 		if (nomBo.equals("masmenos")) {
-			funcion='x';
-			total();
+			ventana.getCajaTexto().setText(String.valueOf(valorPantalla()*-1));
 		}
 		if (nomBo.equals("inversa")) {
 			funcion='i';
@@ -260,9 +254,9 @@ public class ManejadorEventos implements ActionListener {
 			suena(SRC_SONIDOS+"coma.wav");
 			ventana.getCajaTexto().setText(ventana.getCajaTexto().getText()+co);
 		}
-		//sonidos de operadores
+		
 		if ("=+-*/#@R".contains(co)) {
-			switch (co) {
+			switch (co) {//sonidos de operadores
 			case "*":
 				suena(SRC_SONIDOS+"x.wav");
 				break;
@@ -333,10 +327,7 @@ public class ManejadorEventos implements ActionListener {
 			case '/':
 				saca(divide());
 				break;
-			case 'x':
-				saca(masmenos());
-				break;
-				
+
 			case 'i':
 				saca(inversa());
 				break;
@@ -387,17 +378,7 @@ public class ManejadorEventos implements ActionListener {
 	//Muestra y pronuncia el resultado de una operación en el visor
 	private void saca(String res) {
 		if (res.equals("Infinity")) {
-			ventana.getCajaTexto().setText(INFINITO);
-			if (ventana.isVoz()) suena(SRC_SONIDOS+"infin.wav");
-			if (ventana.isVoz()) new Pronuncia(INFINITO);
-			new Terremoto(ventana);
-			try {
-				Thread.sleep(6000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			ventana.getCajaTexto().setText("0");
+			alInfinito();
 		}else if (!ventana.isEsProgramador()) {
 				ventana.getCajaTexto().setText(res);
 				if (ventana.isVoz()) new Pronuncia(res);
@@ -409,6 +390,19 @@ public class ManejadorEventos implements ActionListener {
 			if (ventana.isVoz()) new Pronuncia(convierteABase(Integer.valueOf(ventana.getlBase()[1].getText().split("\\.")[0]), base));
 		}
 	}
+
+	private void alInfinito() {
+		ventana.getCajaTexto().setText(INFINITO);
+		if (ventana.isVoz()) suena(SRC_SONIDOS+"infin.wav");
+		if (ventana.isVoz()) new Pronuncia(INFINITO);
+		new Terremoto(ventana);
+		try {
+			Thread.sleep(6000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		ventana.getCajaTexto().setText("0");
+	}
 	private String suma() {
 		System.out.println("suma"+Double.toString(acumulador+valorPantalla()));
 		return Double.toString(acumulador+valorPantalla());
@@ -419,11 +413,11 @@ public class ManejadorEventos implements ActionListener {
 			ventana.getCajaTexto().setText("Negativo");
 			return "0";
 		}
-		return acuStr();
+		return acumulACad();
 	}
 	private String multiplica() {
 		acumulador*=valorPantalla();
-		return acuStr();
+		return acumulACad();
 	}
 	private String divide() {
 		if (valorPantalla()==0) {
@@ -437,30 +431,28 @@ public class ManejadorEventos implements ActionListener {
 		}
 		else {
 			acumulador/=valorPantalla();
-			return acuStr();
+			return acumulACad();
 		}
-	}
-	private String masmenos() {
-		acumulador*=-1;
-		return acuStr();
 	}
 	private String inversa() {
 		if (acumulador==0) {
+			new Terremoto(ventana);
 			return "Infinito";
+			
 		}
 		else {
 		acumulador=1/acumulador;
-		return acuStr();
+		return acumulACad();
 		}
 	}
 	private String cuadrado() {
 		acumulador=Math.pow(acumulador, 2);
-		return acuStr();
+		return acumulACad();
 	}
 	private String raizCuadrada() {
 		if (acumulador>0) {
 			acumulador=Math.sqrt(acumulador);
-			return acuStr();
+			return acumulACad();
 		}else {
 			new Matrix(ventana);
 			return MATRIX;
@@ -472,12 +464,12 @@ public class ManejadorEventos implements ActionListener {
 			return MATRIX;
 		}else {
 			acumulador=Math.pow(acumulador, 1/valorPantalla());
-			return acuStr();
+			return acumulACad();
 		}
 	}
 	private String potenciaEnesima() {
 		acumulador=Math.pow(acumulador, valorPantalla());
-		return acuStr();
+		return acumulACad();
 	}
 	private String factorial() {
 		if(acumulador==Math.floor(acumulador)) {
@@ -487,7 +479,7 @@ public class ManejadorEventos implements ActionListener {
 				if (Double.isInfinite(acumulador))
 					break;
 			}
-			return acuStr();
+			return acumulACad();
 		}else {
 			opera=true;
 			acumulador=0;
@@ -550,7 +542,7 @@ public class ManejadorEventos implements ActionListener {
 	}
 	private String resto() {
 		acumulador=acumulador%valorPantalla();
-		return acuStr();
+		return acumulACad();
 	}
 	//reproduce archivos de sonido dependiendo de la cadena que recibe
 	private void suena(String archivo) {
@@ -561,40 +553,39 @@ public class ManejadorEventos implements ActionListener {
 				sonido.open(AudioSystem.getAudioInputStream(new File(archivo)));
 				sonido.start();
 			} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 	}
-
-
-	private String acuStr() {
+	//Acumulador a cadena---------------------------
+	private String acumulACad() {
 		return Double.toString(acumulador);
 	}
 	private String pi() {
 		acumulador=Math.PI;
-		return acuStr();
+		return acumulACad();
 	}
 	private String seno() {
 		acumulador=Math.sin(acumulador);
-		return acuStr();
+		return acumulACad();
 	}
 	private String coseno() {
 		acumulador=Math.cos(acumulador);
-		return acuStr();
+		return acumulACad();
 	}
 	private String tangente() {
 		acumulador=Math.tan(acumulador);
-		return acuStr();
+		return acumulACad();
 	}
-	private void quitafoco() {
+	//util para que funcione el teclado tras los eventos de click le da el foco a la ventana ya que la ventana es la que escucha el teclado
+	private void focoAVentana() {
 		ventana.requestFocus();
 	}	
-	//colorea botones y etiquetas
+	//asigna a los array r[],g[],b[] el color de todos los botones y visores de forma aleatoria por encima de abajo para que sean claros
 	private void activaColor(JCheckBox casilla, Icon on) {
 		suena(SRC_SONIDOS+"interfaceTS2.wav");
 		color=true;
 		System.out.println("color");
-		ventana.geteInterruptor()[2].setVisible(true);
+		ventana.getEInterruptor()[2].setVisible(true);
 		ventana.getInterruptor()[2].setVisible(true);
 		casilla.setIcon(on);
 		int abajo=180;
@@ -604,8 +595,8 @@ public class ManejadorEventos implements ActionListener {
 		int[] rb =new int[ventana.getlBase().length];
 		int[] gb =new int[ventana.getlBase().length];
 		int[] bb =new int[ventana.getlBase().length];
-		for (int i=0;i<=ventana.geteInterruptor().length-1;i++)
-			ventana.geteInterruptor()[i].setForeground(new Color(255,255,255));
+		for (int i=0;i<=ventana.getEInterruptor().length-1;i++)
+			ventana.getEInterruptor()[i].setForeground(new Color(255,255,255));
 		for (int bo=0;bo<ventana.getBoton().length;bo++) {
 			r[bo]=(int)(Math.random()*(254-abajo)+abajo);
 			g[bo]=(int)(Math.random()*(254-abajo)+abajo);
@@ -630,16 +621,16 @@ public class ManejadorEventos implements ActionListener {
 	//quita colores
 	private void desactivaColor(JCheckBox casilla, Icon off) {
 		suena(SRC_SONIDOS+"interfaceTS.wav");
-		ventana.geteInterruptor()[2].setVisible(false);
+		ventana.getEInterruptor()[2].setVisible(false);
 		ventana.getInterruptor()[2].setVisible(false);
-		for (int i=0;i<=ventana.geteInterruptor().length-1;i++)
-			ventana.geteInterruptor()[i].setForeground(new Color(0,0,0));
+		for (int i=0;i<=ventana.getEInterruptor().length-1;i++)
+			ventana.getEInterruptor()[i].setForeground(new Color(0,0,0));
 		casilla.setIcon(off);
 		for (int bo=0;bo<ventana.getBoton().length;bo++) 
 			ventana.getBoton()[bo].setBackground(null);
 		for (int ba=0;ba<ventana.getlBase().length;ba++)
 			ventana.getlBase()[ba].setBackground(null);
-		ventana.getCajaTexto().setBackground(null);
+		ventana.getCajaTexto().setBackground(new Color(250,250,250));
 		ventana.getContentPane().setBackground(null);
 		ventana.getBarra().setBackground(null);
 		ventana.getEstandar().setBackground(null);

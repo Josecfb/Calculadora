@@ -8,17 +8,17 @@ import vista.Ventana;
 public class Colores  implements Runnable{
 	private Ventana ventana;
 	private Thread hilo;
-	private boolean pausa;
+	//private boolean pausa;
 
 	public Colores(Ventana ventana,Boolean pausa) {
 		this.ventana=ventana;
-		this.pausa=pausa;
+		//this.pausa=pausa;
 		hilo=new Thread(this);
 		hilo.start();
 		//hilo.suspend();
 	}
 	//-----------------------------------------------------
-	//Hilo que cambia el color de los elementos de forma gradual
+	//Hilo que cambia el color de los elementos de forma gradual por incrementos de rgb para cada objeto
 	//---------------------------------------------------------
 	@Override
 	public void run() {
@@ -46,6 +46,7 @@ public class Colores  implements Runnable{
 		int[] irb=new int[ventana.getlBase().length];
 		int[] igb =new int[ventana.getlBase().length];
 		int[] ibb =new int[ventana.getlBase().length];
+		
 		for (int ba=0;ba<ventana.getlBase().length;ba++) {
 			rb[ba]=ventana.getlBase()[ba].getBackground().getRed();
 			gb[ba]=ventana.getlBase()[ba].getBackground().getGreen();
@@ -59,21 +60,10 @@ public class Colores  implements Runnable{
 		}
 		while (true) {
 				try {
-					Thread.sleep(10);
+					Thread.sleep(80);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				synchronized (this) {
-				while (pausa) {
-						try {
-							this.wait();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-				}
-				}
-
 				for (int bo=0;bo<ventana.getBoton().length;bo++) {				
 					r[bo]+=ir[bo];
 					g[bo]+=ig[bo];
@@ -100,18 +90,17 @@ public class Colores  implements Runnable{
 				ventana.getProgramador().setBackground(new Color(r[10],g[11],b[12]));
 			}
 	}
-
-	public void setPausa(boolean pausa) {
-		this.pausa = pausa;
-	}
+	//esto era un intento de pausar el hilo pero no lo consegui
+//	public void setPausa(boolean pausa) {
+//		this.pausa = pausa;
+//	}
+	//remedios chapu
 	@SuppressWarnings("deprecation")
 	public synchronized void pausar() {
 			hilo.suspend();
 	}
 	@SuppressWarnings("deprecation")
 	public synchronized void reanudar() {
-
-
 		hilo.resume();
 	}
 }

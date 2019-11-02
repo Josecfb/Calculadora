@@ -57,12 +57,10 @@ public class Pronuncia implements Runnable{
 		}
 		if(!palabras.contains("primo"))
 		for(int l=0;l<palabras.length();l++) {
-			try {
-				Thread.sleep(400);
+			try 
+				{Thread.sleep(400);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				e.printStackTrace();}
 			
 
 			if (palabras.charAt(l)=='.')
